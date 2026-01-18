@@ -14,7 +14,7 @@ class Engine {
     static constexpr Uint32 pixel_format = SDL_PIXELFORMAT_ARGB32;
 
     uint64_t frames_rendered = 0;
-    static constexpr uint64_t max_frames = 1000000000;
+    bool paused = false;
 
     Uint32 mapRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
         return (a << 24) | (r << 16) | (g << 8) | b;

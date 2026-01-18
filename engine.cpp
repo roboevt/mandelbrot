@@ -77,13 +77,10 @@ void Engine::render() {
     // Present the renderer's content to the screen
     SDL_RenderPresent(renderer);
 
-    frames_rendered++;
+    frames_rendered += !paused; // TODO this is a nasty hack
 }
 
 bool Engine::process_events() {
-    if(frames_rendered >= max_frames)
-        return false;
-
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_QUIT) {
@@ -95,9 +92,9 @@ bool Engine::process_events() {
         }
         if (e.type == SDL_MOUSEWHEEL) {
             if (e.wheel.y > 0) { // scroll up
-                scale *= 0.9f;
+                scale *= 0.8f;
             } else if (e.wheel.y < 0) { // scroll down
-                scale *= 1.1f;
+                scale *= 1.2f;
             }
         }
         if (e.type == SDL_MOUSEMOTION) {
@@ -107,10 +104,23 @@ bool Engine::process_events() {
             }
         }
         if( e.type == SDL_KEYDOWN ) {
-            if( e.key.keysym.sym == SDLK_f )
+            if( e.key.keysym.sym == SDLK_f ) {
                 center_x = -0.5;
                 center_y = 0.0;
                 scale = 3.0;
+            }
+        }
+        if( e.type == SDL_KEYDOWN ) {
+            if( e.key.keysym.sym == SDLK_SPACE )
+                paused = !paused;
+        }
+        if( e.type == SDL_KEYDOWN ) {
+            if( e.key.keysym.sym == SDLK_LEFT )
+                frames_rendered -= 1;
+        }
+        if( e.type == SDL_KEYDOWN ) {
+            if( e.key.keysym.sym == SDLK_RIGHT )
+                frames_rendered += 1;
         }
         if (e.type == SDL_WINDOWEVENT) {
             if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -136,7 +146,7 @@ Uint32 Engine::calculate_pixel(int x, int y) {
     const double imag = center_y + (y - height / 2.0) * scale / height;
 
     const std::complex<double> c(real, imag);
-    std::complex<double> z(0,0);
+    std::complex<double> z(0, std::sin(frames_rendered * 0.01));
 
     const int max_iterations = 256;
     int i = 0;
