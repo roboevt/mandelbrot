@@ -146,7 +146,7 @@ Uint32 Engine::calculate_pixel(int x, int y) {
     const double imag = center_y + (y - height / 2.0) * scale / height;
 
     const std::complex<double> c(real, imag);
-    std::complex<double> z(0, std::sin(frames_rendered * 0.01));
+    std::complex<double> z(std::sin(frames_rendered * 0.004),0);
 
     const int max_iterations = 256;
     int i = 0;
@@ -158,6 +158,6 @@ Uint32 Engine::calculate_pixel(int x, int y) {
         }
     }
 
-    const uint8_t color = static_cast<uint8_t>(255 * i / max_iterations);
-    return mapRGBA(color, color, color, color);
+    const uint8_t color = static_cast<uint8_t>((225 * i / max_iterations));
+    return mapRGBA(color, color, color - 20, color + 30);
 }
